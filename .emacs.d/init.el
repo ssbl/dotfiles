@@ -11,8 +11,14 @@
 (setq package-list
       '(auto-complete
         rtags
+        company
+        company-irony
+        company-irony-c-headers
+        company-rtags
+        irony
         clang-format
         flycheck
+        auctex
         go-mode
         haskell-mode
         rust-mode
@@ -32,20 +38,31 @@
 
 ;; autocomplete
 (ac-config-default)
-(require 'auto-complete-clang)
 (require 'c++-include-files)
-(setq ac-clang-flags (append '("-std=c++11") c++-include-paths))
-(setq ac-candidate-limit 100)
-(global-set-key (kbd "C-,") 'auto-complete)
+(require 'company)
+(require 'company-irony-c-headers)
+(setq company-backends (delete 'company-semantic company-backends))
 
 ;; cmake-ide
 (require 'rtags)
+(require 'company-rtags)
+(setq rtags-completions-enabled t)
+(setq rtags-autostart-diagnostics t)
 (cmake-ide-setup)
-(setq cmake-ide-flags-c++ (append '("-std=c++11") c++-include-paths))
-(rtags-diagnostics)
+(setq cmake-ide-flags-c++ (append '("-std=c++14") c++-include-paths))
+
+;; irony-mode
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+(setq company-backends (delete 'company-semantic company-backends))
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; clang-format
 (global-set-key (kbd "C-<tab>") 'clang-format-region)
+(global-set-key (kbd "C-M-<tab>") 'clang-format-buffer)
 ;; don't indent namespaces
 (defun disable-namespace-indent ()
   (c-set-offset 'innamespace [0]))
@@ -61,7 +78,7 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (setq flycheck-check-syntax-automatically '(mode-enabled save))
 (add-hook 'c++-mode-hook (lambda ()
-                           (setq flycheck-clang-language-standard "c++11")))
+                           (setq flycheck-clang-language-standard "c++14")))
 
 ;; ido-mode
 (require 'ido)
@@ -120,7 +137,6 @@
 (setq-default tab-width 4)
 
 ;; Font stuff
-;; (set-face-attribute 'default nil :height 105)
 (set-frame-font "Ubuntu Mono 11" nil t)
 
 ;; Theme settings
@@ -147,18 +163,35 @@
 (global-set-key (kbd "C-x C-h") 'ssbl-open-header-in-other-window)
 
 ;; header completion for C and C++
-(defun ssbl-ac-headers-init ()
-  (require 'auto-complete-c-headers)
-  (setq ac-sources '(ac-source-clang))
-  (add-to-list 'ac-sources 'ac-source-c-headers))
-(add-hook 'c-mode-hook   'ssbl-ac-headers-init)
-(add-hook 'c++-mode-hook 'ssbl-ac-headers-init)
+(add-hook 'c++-mode-hook (lambda ()
+                           (auto-complete-mode 0)
+                           (company-mode 1)
+
+                           (add-to-list 'company-backends
+                                        '(company-irony-c-headers
+                                          company-irony
+                                          company-rtags
+                                          company-clang))))
+(add-hook 'c-mode-hook (lambda ()
+                         (auto-complete-mode nil)
+                         (add-to-list 'company-backends
+                                      '(company-irony-c-headers
+                                        company-irony))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(TeX-view-program-selection
+   (quote
+    (((output-dvi has-no-display-manager)
+      "dvi2tty")
+     ((output-dvi style-pstricks)
+      "dvips and gv")
+     (output-dvi "xdvi")
+     (output-pdf "Okular")
+     (output-html "xdg-open"))))
  '(custom-safe-themes
    (quote
     ("0ec1d50ee7c886bd065aacff1a6a5034a32357c89a07561fd14f64dfcbf0cf6d" default))))
