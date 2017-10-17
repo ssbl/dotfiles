@@ -9,20 +9,13 @@
       (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
 (setq package-list
-      '(auto-complete
-        rtags
-        company
-        company-irony
-        company-irony-c-headers
-        company-rtags
-        irony
-        clang-format
+      '(clang-format
+        auto-complete
         flycheck
         auctex
         go-mode
         haskell-mode
-        rust-mode
-        cmake-ide))
+        rust-mode))
 
 (package-initialize)
 
@@ -36,30 +29,6 @@
 ;; set jdee server directory
 (setq jdee-server-dir "~/.emacs.d/jdee-server-dir")
 
-;; autocomplete
-(ac-config-default)
-(require 'c++-include-files)
-(require 'company)
-(require 'company-irony-c-headers)
-(setq company-backends (delete 'company-semantic company-backends))
-
-;; cmake-ide
-(require 'rtags)
-(require 'company-rtags)
-(setq rtags-completions-enabled t)
-(setq rtags-autostart-diagnostics t)
-(cmake-ide-setup)
-(setq cmake-ide-flags-c++ (append '("-std=c++14") c++-include-paths))
-
-;; irony-mode
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-(setq company-backends (delete 'company-semantic company-backends))
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
 ;; clang-format
 (global-set-key (kbd "C-<tab>") 'clang-format-region)
 (global-set-key (kbd "C-M-<tab>") 'clang-format-buffer)
@@ -71,6 +40,7 @@
 ;; jedi setup for Python
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda ()
+                              (auto-complete-mode 1)
                               (setq ac-sources '(ac-source-jedi-direct))))
 (setq jedi:complete-on-dot t)
 
@@ -113,7 +83,6 @@
 
 ;; comments
 (global-set-key (kbd "C-;") 'comment-dwim)
-(setq comment-style 'multi-line)
 
 ;; trailing whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -161,22 +130,6 @@
   (ff-find-other-file 't)
   (other-window 1))
 (global-set-key (kbd "C-x C-h") 'ssbl-open-header-in-other-window)
-
-;; header completion for C and C++
-(add-hook 'c++-mode-hook (lambda ()
-                           (auto-complete-mode 0)
-                           (company-mode 1)
-
-                           (add-to-list 'company-backends
-                                        '(company-irony-c-headers
-                                          company-irony
-                                          company-rtags
-                                          company-clang))))
-(add-hook 'c-mode-hook (lambda ()
-                         (auto-complete-mode nil)
-                         (add-to-list 'company-backends
-                                      '(company-irony-c-headers
-                                        company-irony))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
