@@ -48,7 +48,9 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (setq flycheck-check-syntax-automatically '(mode-enabled save))
 (add-hook 'c++-mode-hook (lambda ()
-                           (setq flycheck-clang-language-standard "c++14")))
+                           (setq flycheck-gcc-language-standard "c++17")))
+;;; set checker for python3
+(setq flycheck-python-pycompile-executable "python3")
 
 ;; ido-mode
 (require 'ido)
@@ -73,7 +75,7 @@
 ;; hide toolbar, scroll-bar, menu-bar
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
-(setq menu-bar-mode nil)
+(menu-bar-mode -1)
 
 ;; no blinking cursor
 (setq blink-cursor-mode nil)
