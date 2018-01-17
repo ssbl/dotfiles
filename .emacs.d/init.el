@@ -15,7 +15,10 @@
         auctex
         go-mode
         haskell-mode
-        rust-mode))
+        rust-mode
+        ivy
+        counsel
+        diminish))
 
 (package-initialize)
 
@@ -53,9 +56,21 @@
 (setq flycheck-python-pycompile-executable "python3")
 
 ;; ido-mode
-(require 'ido)
-(ido-mode t)
-(global-set-key (kbd "M-l") 'ido-switch-buffer)
+;; (require 'ido)
+;; (ido-mode t)
+;; (global-set-key (kbd "M-l") 'ido-switch-buffer)
+
+;; ivy
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(global-set-key (kbd "C-c g") 'counsel-git)
+(global-set-key (kbd "C-c j") 'counsel-git-grep)
+(global-set-key (kbd "C-c k") 'counsel-ag)
+(global-set-key (kbd "C-x l") 'counsel-locate)
+
+(diminish 'abbrev-mode)
+(diminish 'ivy-mode)
+(diminish 'counsel-mode)
 
 ;; yes/no to y/n
 (defalias 'yes-or-no-p 'y-or-n-p)
