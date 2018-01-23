@@ -72,6 +72,9 @@
 (diminish 'ivy-mode)
 (diminish 'counsel-mode)
 
+;; magit
+(global-set-key (kbd "C-x g") 'magit-status)
+
 ;; yes/no to y/n
 (defalias 'yes-or-no-p 'y-or-n-p)
 
