@@ -7,24 +7,27 @@
 (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
       (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-
-(setq package-list
-      '(clang-format
-        auto-complete
-        flycheck
-        auctex
-        go-mode
-        haskell-mode
-        rust-mode
-        ivy
-        counsel
-        diminish))
-
 (package-initialize)
 
-(unless package-archive-contents package-refresh-contents)
-(dolist (package package-list)
-  (unless (package-installed-p package) (package-install package)))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+
+;; packages
+(use-package diminish :demand t)
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+(use-package auto-complete :defer t)
+(use-package clang-format :defer t)
+(use-package haskell-mode :defer t)
+(use-package go-mode :defer t)
+(use-package rust-mode :defer t)
 
 ;; add a directory for loading lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -36,9 +39,6 @@
 (global-set-key (kbd "C-<tab>") 'clang-format-region)
 (global-set-key (kbd "C-M-<tab>") 'clang-format-buffer)
 ;; don't indent namespaces
-(defun disable-namespace-indent ()
-  (c-set-offset 'innamespace [0]))
-(add-hook 'c++-mode-hook 'disable-namespace-indent)
 
 ;; jedi setup for Python
 (add-hook 'python-mode-hook 'jedi:setup)
@@ -47,39 +47,57 @@
                               (setq ac-sources '(ac-source-jedi-direct))))
 (setq jedi:complete-on-dot t)
 
-;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(setq flycheck-check-syntax-automatically '(mode-enabled save))
-(add-hook 'c++-mode-hook (lambda ()
-                           (setq flycheck-gcc-language-standard "c++17")))
-;;; set checker for python3
-(setq flycheck-python-pycompile-executable "python3")
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode)
+  :custom
+  (flycheck-python-pycompile-executable "python3")
+  (flycheck-check-syntax-automatically '(mode-enabled save)))
 
-;; ido-mode
-;; (require 'ido)
-;; (ido-mode t)
-;; (global-set-key (kbd "M-l") 'ido-switch-buffer)
+(use-package cc-mode
+  :config
+  (add-hook 'c++-mode-hook (lambda ()
+                             (c-set-offset 'innamespace [0])))
+  (add-hook 'c++-mode-hook (lambda ()
+                             (setq flycheck-gcc-language-standard "c++17"))))
 
-;; ivy
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(global-set-key (kbd "C-c g") 'counsel-git)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-x l") 'counsel-locate)
+(use-package ivy
+  :defer t
+  :diminish
+  :custom
+  (ivy-use-virtual-buffers t))
 
-(diminish 'abbrev-mode)
-(diminish 'ivy-mode)
-(diminish 'counsel-mode)
+(use-package counsel
+  :after ivy
+  :diminish
+  :bind (("C-c g" . 'counsel-git)
+         ("C-c j" . 'counsel-git-grep)
+         ("C-c k" . 'counsel-ag)
+         ("C-x l" . 'counsel-locate)))
 
-;; magit
-(global-set-key (kbd "C-x g") 'magit-status)
+(use-package abbrev
+  :defer t
+  :diminish abbrev-mode)
+
+(use-package magit
+  :defer t
+  :bind (("C-x g" . 'magit-status)))
+
+(use-package evil
+  :demand t
+  :diminish undo-tree-mode
+  :config
+  (evil-mode t)
+  (define-key evil-normal-state-map (kbd "C-r") 'isearch-backward))
 
 ;; yes/no to y/n
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; save buffers open when closing Emacs
-(desktop-save-mode 1)
+(use-package desktop
+  :demand t
+  :init (desktop-save-mode 1)
+  :custom
+  (desktop-restore-eager 1))
 
 ;; copy to clipboard
 (setq x-select-enable-clipboard t)
@@ -126,7 +144,7 @@
 (setq-default tab-width 4)
 
 ;; Font stuff
-(set-frame-font "Ubuntu Mono 11" nil t)
+(set-frame-font "Inconsolata 12" nil t)
 
 ;; Theme settings
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
@@ -144,33 +162,9 @@
 
 ;; open header file in other window
 (setq ff-search-directories '("." "../include" "../src"))
-(defun ssbl-open-header-in-other-window ()
+(defun ssbl/open-header-in-other-window ()
   "Opens the .h or .c file for the current window's file in other window."
   (interactive)
   (ff-find-other-file 't)
   (other-window 1))
 (global-set-key (kbd "C-x C-h") 'ssbl-open-header-in-other-window)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(TeX-view-program-selection
-   (quote
-    (((output-dvi has-no-display-manager)
-      "dvi2tty")
-     ((output-dvi style-pstricks)
-      "dvips and gv")
-     (output-dvi "xdvi")
-     (output-pdf "Okular")
-     (output-html "xdg-open"))))
- '(custom-safe-themes
-   (quote
-    ("0ec1d50ee7c886bd065aacff1a6a5034a32357c89a07561fd14f64dfcbf0cf6d" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
