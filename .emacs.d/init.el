@@ -90,6 +90,9 @@
   (evil-mode t)
   (define-key evil-normal-state-map (kbd "C-r") 'isearch-backward))
 
+(use-package midnight
+  :bind (("C-c z" . clean-buffer-list)))
+
 ;; yes/no to y/n
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -167,4 +170,4 @@
   (interactive)
   (ff-find-other-file 't)
   (other-window 1))
-(global-set-key (kbd "C-x C-h") 'ssbl-open-header-in-other-window)
+(global-set-key (kbd "C-x C-h") 'ssbl/open-header-in-other-window)
