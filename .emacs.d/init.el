@@ -24,7 +24,6 @@
   ;; To disable collection of benchmark data after init is done.
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 (use-package auto-complete :defer t)
-(use-package clang-format :defer t)
 (use-package haskell-mode :defer t)
 (use-package go-mode :defer t)
 (use-package rust-mode :defer t)
