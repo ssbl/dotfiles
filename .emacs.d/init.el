@@ -36,16 +36,25 @@
 (setq jdee-server-dir "~/.emacs.d/jdee-server-dir")
 
 ;; clang-format
-(global-set-key (kbd "C-<tab>") 'clang-format-region)
-(global-set-key (kbd "C-M-<tab>") 'clang-format-buffer)
-;; don't indent namespaces
+(use-package clang-format
+  :defer t
+  :after cc-mode
+  :bind (("C-<tab>"   . clang-format-region)
+         ("C-M-<tab>" . clang-format-buffer))
+  :custom
+  (clang-format-style "mozilla"))
 
 ;; jedi setup for Python
-(add-hook 'python-mode-hook 'jedi:setup)
-(add-hook 'python-mode-hook (lambda ()
-                              (auto-complete-mode 1)
-                              (setq ac-sources '(ac-source-jedi-direct))))
-(setq jedi:complete-on-dot t)
+(use-package jedi
+  :defer t
+  :preface
+  (defun my-python-mode-hook ()
+    (jedi:setup)
+    (auto-complete-mode 1)
+    (setq ac-sources '(ac-source-jedi-direct)))
+  :hook (python-mode . my-python-mode-hook)
+  :custom
+  (jedi:complete-on-dot t))
 
 (use-package flycheck
   :ensure t
@@ -55,11 +64,19 @@
   (flycheck-check-syntax-automatically '(mode-enabled save)))
 
 (use-package cc-mode
+  :preface
+  (defun my-c-mode-hook ()
+    ;; placeholder
+    )
+  (defun my-c++-mode-hook ()
+    (c-set-offset 'innamespace [0])
+    (setq flycheck-clang-include-path
+          (mapcar #'expand-file-name '("../include" "../src")))
+    (setq flycheck-clang-language-standard "c++17"))
+  :hook (c-mode . my-c-mode-hook)
+  :hook (c++-mode . my-c++-mode-hook)
   :config
-  (add-hook 'c++-mode-hook (lambda ()
-                             (c-set-offset 'innamespace [0])))
-  (add-hook 'c++-mode-hook (lambda ()
-                             (setq flycheck-gcc-language-standard "c++17"))))
+  (setq flycheck-c/c++-clang-executable "/usr/bin/clang-7"))
 
 (use-package ivy
   :defer t
@@ -91,7 +108,9 @@
   (define-key evil-normal-state-map (kbd "C-r") 'isearch-backward))
 
 (use-package midnight
-  :bind (("C-c z" . clean-buffer-list)))
+  :bind (("C-c z" . clean-buffer-list))
+  :custom
+  (clean-buffer-list-delay-special 7))
 
 ;; yes/no to y/n
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -136,7 +155,7 @@
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
                  '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
 )
-(toggle-fullscreen)
+(add-hook 'after-init-hook 'toggle-fullscreen)
 
 ;; disable Ctrl-Z
 (global-unset-key (kbd "C-z"))
