@@ -27,6 +27,7 @@
 (use-package haskell-mode :defer t)
 (use-package go-mode :defer t)
 (use-package rust-mode :defer t)
+(use-package modern-cpp-font-lock :defer t)
 
 ;; add a directory for loading lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -34,7 +35,6 @@
 ;; set jdee server directory
 (setq jdee-server-dir "~/.emacs.d/jdee-server-dir")
 
-;; clang-format
 (use-package clang-format
   :defer t
   :after cc-mode
@@ -43,7 +43,6 @@
   :custom
   (clang-format-style "mozilla"))
 
-;; jedi setup for Python
 (use-package jedi
   :defer t
   :preface
@@ -71,7 +70,8 @@
     (c-set-offset 'innamespace [0])
     (setq flycheck-clang-include-path
           (mapcar #'expand-file-name '("../include" "../src")))
-    (setq flycheck-clang-language-standard "c++17"))
+    (setq flycheck-clang-language-standard "c++17")
+    (modern-c++-font-lock-mode))
   :hook (c-mode . my-c-mode-hook)
   :hook (c++-mode . my-c++-mode-hook)
   :config
@@ -106,6 +106,11 @@
   (evil-mode t)
   (define-key evil-normal-state-map (kbd "C-r") 'isearch-backward))
 
+(use-package smart-newline
+  :diminish
+  :bind (("C-j" . smart-newline))
+  :commands smart-newline-mode)
+
 (use-package midnight
   :bind (("C-c z" . clean-buffer-list))
   :custom
@@ -119,6 +124,10 @@
   :init (desktop-save-mode 1)
   :custom
   (desktop-restore-eager 1))
+
+(use-package auto-revert
+  :defer t
+  :diminish)
 
 ;; copy to clipboard
 (setq x-select-enable-clipboard t)
@@ -160,9 +169,9 @@
 (global-unset-key (kbd "C-z"))
 
 ;; Auto-indent
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
+;; (define-key global-map (kbd "RET") 'newline-and-indent)
+;; (setq-default indent-tabs-mode nil)
+;; (setq-default tab-width 4)
 
 ;; Font stuff
 (set-frame-font "Inconsolata 12" nil t)
