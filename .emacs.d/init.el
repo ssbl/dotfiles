@@ -54,6 +54,14 @@
   :custom
   (jedi:complete-on-dot t))
 
+(use-package ycmd
+  :ensure t
+  :init
+  (set-variable 'ycmd-server-command '("python" "/home/shubham/src/ycmd/ycmd"))
+  (set-variable 'ycmd-extra-conf-whitelist '("~/.ycm_extra_conf.py"))
+  (set-variable 'ycmd-global-config
+		(expand-file-name "~/.ycm_extra_conf.py")))
+
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode)
@@ -61,12 +69,25 @@
   (flycheck-python-pycompile-executable "python3")
   (flycheck-check-syntax-automatically '(mode-enabled save)))
 
+(use-package flycheck-ycmd
+  :ensure t
+  :init (flycheck-ycmd-setup))
+
+(use-package eyebrowse
+  :ensure t
+  :init (eyebrowse-mode t))
+
+(use-package projectile
+  :ensure t
+  :diminish)
+
 (use-package cc-mode
   :preface
   (defun my-c-mode-hook ()
     ;; placeholder
     )
   (defun my-c++-mode-hook ()
+    (ycmd-mode)
     (c-set-offset 'innamespace [0])
     (setq flycheck-clang-include-path
           (mapcar #'expand-file-name '("../include" "../src")))
