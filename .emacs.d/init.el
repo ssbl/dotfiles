@@ -39,9 +39,7 @@
   :defer t
   :after cc-mode
   :bind (("C-<tab>"   . clang-format-region)
-         ("C-M-<tab>" . clang-format-buffer))
-  :custom
-  (clang-format-style "mozilla"))
+         ("C-M-<tab>" . clang-format-buffer)))
 
 (use-package jedi
   :defer t
@@ -83,6 +81,9 @@
 
 (use-package cc-mode
   :preface
+  (defun my-c-mode-common-hook ()
+    (setq c-block-comment-prefix " * ")
+    (setq c-basic-offset 4))
   (defun my-c-mode-hook ()
     ;; placeholder
     )
@@ -96,6 +97,7 @@
   :hook (c-mode . my-c-mode-hook)
   :hook (c++-mode . my-c++-mode-hook)
   :config
+  (setq c-mode-common-hook 'my-c-mode-common-hook)
   (setq flycheck-c/c++-clang-executable "/usr/bin/clang-7"))
 
 (use-package ivy
@@ -131,6 +133,10 @@
   :diminish
   :bind (("C-j" . smart-newline))
   :commands smart-newline-mode)
+
+(use-package server
+  :init
+  (add-hook 'after-init-hook 'server-start))
 
 (use-package midnight
   :bind (("C-c z" . clean-buffer-list))
