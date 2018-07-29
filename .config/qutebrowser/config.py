@@ -6,91 +6,25 @@
 # Uncomment this to still load settings configured via autoconfig.yml
 # config.load_autoconfig()
 
-# Background color of unselected odd tabs.
+# Foreground color of unselected odd tabs.
 # Type: QtColor
-c.colors.tabs.odd.bg = '#333'
-
-# Background color of selected odd tabs.
-# Type: QtColor
-c.colors.tabs.selected.odd.bg = '#285577'
-
-# Foreground color of unselected even tabs.
-# Type: QtColor
-c.colors.tabs.even.fg = '#888'
-
-# Height (in pixels or as percentage of the window) of the completion.
-# Type: PercOrInt
-c.completion.height = '20%'
-
-# Require a confirmation before quitting the application.
-# Type: ConfirmQuit
-# Valid values:
-#   - always: Always show a confirmation.
-#   - multiple-tabs: Show a confirmation if multiple tabs are opened.
-#   - downloads: Show a confirmation if downloads are running
-#   - never: Never show a confirmation.
-c.confirm_quit = ['multiple-tabs', 'downloads']
-
-# Always restore open sites when qutebrowser is reopened.
-# Type: Bool
-c.auto_save.session = True
-
-# Value to send in the `Accept-Language` header. Note that the value
-# read from JavaScript is always the global value.
-# Type: String
-c.content.headers.accept_language = 'en-US,en;q=0.5'
-
-# Enable plugins in Web pages.
-# Type: Bool
-c.content.plugins = True
+c.colors.tabs.odd.fg = '#888'
 
 # Comma-separated list of regular expressions to use for 'next' links.
 # Type: List of Regex
 c.hints.next_regexes = ['\\bnext\\b', '\\bmore\\b', '\\bnewer\\b', '\\b[>→≫]\\b', '\\b(>>|»)\\b', '\\bcontinue\\b']
 
-# Aliases for commands. The keys of the given dictionary are the
-# aliases, while the values are the commands they map to.
-# Type: Dict
-c.aliases = {'q': 'quit --save', 'w': 'session-save', 'wq': 'quit --save'}
-
-# Background color of the statusbar.
-# Type: QssColor
-c.colors.statusbar.normal.bg = 'black'
-
-# Background color of selected even tabs.
-# Type: QtColor
-c.colors.tabs.selected.even.bg = '#285577'
-
 # Enable WebGL.
 # Type: Bool
 c.content.webgl = True
-
-# Default monospace fonts. Whenever "monospace" is used in a font
-# setting, it's replaced with the fonts listed here.
-# Type: Font
-c.fonts.monospace = 'Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Courier New", Courier, "Liberation Mono", monospace, Fixed, Consolas, Terminal'
-
-# Foreground color of unselected odd tabs.
-# Type: QtColor
-c.colors.tabs.odd.fg = '#888'
-
-# Foreground color of the statusbar.
-# Type: QssColor
-c.colors.statusbar.normal.fg = 'white'
-
-# Foreground color of the URL in the statusbar on successful load
-# (https).
-# Type: QssColor
-c.colors.statusbar.url.success.https.fg = 'white'
 
 # Default foreground color of the URL in the statusbar.
 # Type: QssColor
 c.colors.statusbar.url.fg = 'gray'
 
-# Enable smooth scrolling for web pages. Note smooth scrolling does not
-# work with the `:scroll-px` command.
+# Open new tabs (middleclick/ctrl+click) in the background.
 # Type: Bool
-c.scrolling.smooth = False
+c.tabs.background = True
 
 # Editor (and arguments) to use for the `open-editor` command. The
 # following placeholders are defined: * `{file}`: Filename of the file
@@ -99,25 +33,28 @@ c.scrolling.smooth = False
 # `{line0}`: Same as `{line}`, but starting from index 0. * `{column0}`:
 # Same as `{column}`, but starting from index 0.
 # Type: ShellCommand
-c.editor.command = ['emacsclient', '{file}']
+c.editor.command = ['gvim', '-f', '{file}', '-c', 'normal {line}G{column0}l']
 
-# Background color of unselected even tabs.
+# Enable plugins in Web pages.
+# Type: Bool
+c.content.plugins = True
+
+# Custom headers for qutebrowser HTTP requests.
+# Type: Dict
+c.content.headers.custom = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+
+# Foreground color of unselected even tabs.
 # Type: QtColor
-c.colors.tabs.even.bg = '#333'
+c.colors.tabs.even.fg = '#888'
 
-# Backend to use to display websites. qutebrowser supports two different
-# web rendering engines / backends, QtWebKit and QtWebEngine. QtWebKit
-# was discontinued by the Qt project with Qt 5.6, but picked up as a
-# well maintained fork: https://github.com/annulen/webkit/wiki -
-# qutebrowser only supports the fork. QtWebEngine is Qt's official
-# successor to QtWebKit. It's slightly more resource hungry than
-# QtWebKit and has a couple of missing features in qutebrowser, but is
-# generally the preferred choice.
-# Type: String
-# Valid values:
-#   - webengine: Use QtWebEngine (based on Chromium).
-#   - webkit: Use QtWebKit (based on WebKit, similar to Safari).
-c.backend = 'webengine'
+# Aliases for commands. The keys of the given dictionary are the
+# aliases, while the values are the commands they map to.
+# Type: Dict
+c.aliases = {'q': 'quit --save', 'w': 'session-save', 'wq': 'quit --save'}
+
+# Background color of the progress bar.
+# Type: QssColor
+c.colors.statusbar.progress.bg = 'white'
 
 # Languages to use for spell checking. You can check for available
 # languages and install dictionaries using scripts/dictcli.py. Run the
@@ -169,6 +106,88 @@ c.backend = 'webengine'
 #   - vi-VN: Vietnamese (Viet Nam)
 c.spellcheck.languages = ['en-US']
 
+# Always restore open sites when qutebrowser is reopened.
+# Type: Bool
+c.auto_save.session = True
+
+# Foreground color of the statusbar.
+# Type: QssColor
+c.colors.statusbar.normal.fg = 'white'
+
+# Backend to use to display websites. qutebrowser supports two different
+# web rendering engines / backends, QtWebKit and QtWebEngine. QtWebKit
+# was discontinued by the Qt project with Qt 5.6, but picked up as a
+# well maintained fork: https://github.com/annulen/webkit/wiki -
+# qutebrowser only supports the fork. QtWebEngine is Qt's official
+# successor to QtWebKit. It's slightly more resource hungry than
+# QtWebKit and has a couple of missing features in qutebrowser, but is
+# generally the preferred choice.
+# Type: String
+# Valid values:
+#   - webengine: Use QtWebEngine (based on Chromium).
+#   - webkit: Use QtWebKit (based on WebKit, similar to Safari).
+c.backend = 'webengine'
+
+# Where to show the downloaded files.
+# Type: VerticalPosition
+# Valid values:
+#   - top
+#   - bottom
+c.downloads.position = 'bottom'
+
+# Background color of selected even tabs.
+# Type: QtColor
+c.colors.tabs.selected.even.bg = '#285577'
+
+# Load a restored tab as soon as it takes focus.
+# Type: Bool
+c.session.lazy_restore = True
+
+# Default monospace fonts. Whenever "monospace" is used in a font
+# setting, it's replaced with the fonts listed here.
+# Type: Font
+c.fonts.monospace = 'Inconsolata, "xos4 Terminus", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Courier New", Courier, "Liberation Mono", monospace, Fixed, Consolas, Terminal'
+
+# Value to send in the `Accept-Language` header. Note that the value
+# read from JavaScript is always the global value.
+# Type: String
+c.content.headers.accept_language = 'en-US,en;q=0.5'
+
+# Background color of unselected even tabs.
+# Type: QtColor
+c.colors.tabs.even.bg = '#333'
+
+# Background color of selected odd tabs.
+# Type: QtColor
+c.colors.tabs.selected.odd.bg = '#285577'
+
+# Background color of the statusbar in insert mode.
+# Type: QssColor
+c.colors.statusbar.insert.bg = 'green'
+
+# Enable smooth scrolling for web pages. Note smooth scrolling does not
+# work with the `:scroll-px` command.
+# Type: Bool
+c.scrolling.smooth = False
+
+# Font used in the tab bar.
+# Type: QtFont
+c.fonts.tabs = '10pt monospace'
+
+# Position of the tab bar.
+# Type: Position
+# Valid values:
+#   - top
+#   - bottom
+#   - left
+#   - right
+c.tabs.position = 'top'
+
+# Foreground color of the URL in the statusbar on successful load
+# (https).
+# Type: QssColor
+c.colors.statusbar.url.success.https.fg = 'white'
+
 # Enable JavaScript.
 # Type: Bool
 config.set('content.javascript.enabled', True, 'file://*')
@@ -181,16 +200,36 @@ config.set('content.javascript.enabled', True, 'chrome://*/*')
 # Type: Bool
 config.set('content.javascript.enabled', True, 'qute://*/*')
 
-# User agent to send. Unset to send the default. Note that the value
-# read from JavaScript is always the global value.
-# Type: String
-c.content.headers.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+# Find text on a page incrementally, renewing the search for each typed
+# character.
+# Type: Bool
+c.search.incremental = True
 
-# Custom headers for qutebrowser HTTP requests.
-# Type: Dict
-c.content.headers.custom = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+# Background color of unselected odd tabs.
+# Type: QtColor
+c.colors.tabs.odd.bg = '#333'
+
+# Require a confirmation before quitting the application.
+# Type: ConfirmQuit
+# Valid values:
+#   - always: Always show a confirmation.
+#   - multiple-tabs: Show a confirmation if multiple tabs are opened.
+#   - downloads: Show a confirmation if downloads are running
+#   - never: Never show a confirmation.
+c.confirm_quit = ['multiple-tabs', 'downloads']
+
+# Background color of the statusbar.
+# Type: QssColor
+c.colors.statusbar.normal.bg = 'black'
+
+# Height (in pixels or as percentage of the window) of the completion.
+# Type: PercOrInt
+c.completion.height = '20%'
 
 # Bindings for normal mode
+config.bind(',f', 'hint links spawn -d firefox {hint-url}')
+config.bind(',p', 'hint links spawn -d firefox -private {hint-url}')
 config.bind('J', 'tab-prev')
 config.bind('K', 'tab-next')
+config.bind('M', 'hint links spawn mpv {hint-url}')
 config.bind('Z', 'open -p')
