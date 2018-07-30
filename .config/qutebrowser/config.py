@@ -33,7 +33,7 @@ c.tabs.background = True
 # `{line0}`: Same as `{line}`, but starting from index 0. * `{column0}`:
 # Same as `{column}`, but starting from index 0.
 # Type: ShellCommand
-c.editor.command = ['gvim', '-f', '{file}', '-c', 'normal {line}G{column0}l']
+c.editor.command = ['emacsclient', '{}']
 
 # Enable plugins in Web pages.
 # Type: Bool
