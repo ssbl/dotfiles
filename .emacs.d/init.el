@@ -157,7 +157,7 @@
   :diminish)
 
 ;; copy to clipboard
-(setq x-select-enable-clipboard t)
+(setq select-enable-clipboard t)
 
 ;; remove junk characters in compilation window
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
@@ -169,6 +169,7 @@
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 (menu-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
 
 ;; no blinking cursor
 (setq blink-cursor-mode nil)
@@ -181,16 +182,6 @@
 
 ;; trailing whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; Fullscreen
-(defun toggle-fullscreen ()
-  (interactive)
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-)
-(add-hook 'after-init-hook 'toggle-fullscreen)
 
 ;; disable Ctrl-Z
 (global-unset-key (kbd "C-z"))
